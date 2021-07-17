@@ -22,7 +22,7 @@ export default function Home() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                method: 'PUT'
+                method: 'POST'
             }
         )
 

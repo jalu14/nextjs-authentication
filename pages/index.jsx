@@ -44,14 +44,14 @@ export default function Home() {
             </h1>
             <p className="mt-3 text-xl text-center">
                 Ya tienes una? {' '}
-                <a href="#" className="text-white">
+                <a href="#" className="text-blue-700">
                     Inicia sesión
                 </a>
             </p>
 
             <div className="bg-white w-full md:w-6/12 lg:w-4/12 rounded p-8 mt-12 shadow-lg">
 
-                <form action="#" className="" onSubmit={handleSubmit}>
+                <form className="" onSubmit={handleSubmit}>
 
                     <fieldset className="flex flex-col">
                         <label htmlFor="email"

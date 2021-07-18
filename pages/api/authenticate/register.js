@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import {connectToDatabase} from "../../../utils/db-connect";
 
 export default async function handler(req, res) {
@@ -10,16 +11,17 @@ export default async function handler(req, res) {
     }
 
     const {db} = await connectToDatabase();
-    const newUser = {
-        email: req.body.email,
-        password: req.body.password,
-        data: {}
-    };
 
-    let existingUser = await db.collection('users').findOne({email: newUser.email});
+    let existingUser = await db.collection('users').findOne({email: req.body.email});
     if (existingUser) {
         return res.status(400).json({status: 'error', message: 'El usuario ya ha sido registrado'});
     }
+
+    const newUser = {
+        email: req.body.email,
+        password: await bcrypt.hash(req.body.password, 10),
+        data: {}
+    };
 
     let createdUser = await db.collection('users').insertOne(newUser);
 

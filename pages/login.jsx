@@ -1,6 +1,10 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
-export default function Register() {
+export default function Login() {
+
+    const router = useRouter();
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -13,7 +17,7 @@ export default function Register() {
         }
 
         const res = await fetch(
-            '/api/authenticate/register',
+            '/api/authenticate/login',
             {
                 body: JSON.stringify({
                     email,
@@ -27,7 +31,10 @@ export default function Register() {
         )
 
         const result = await res.json();
-        // result.status => 'success'
+        if (result && result.status === 'success') {
+            localStorage.setItem('token', result.data.token);
+            router.push('/user');
+        }
     }
 
     return (
@@ -40,21 +47,18 @@ export default function Register() {
             </Head>
 
             <h1 className="text-5xl font-bold text-center">
-                Crea una cuenta
+                Inicia sesión
             </h1>
             <p className="mt-3 text-xl text-center">
-                Ya tienes una? {' '}
-                <a href="/login" className="text-blue-700">
-                    Inicia sesión
+                No tienes cuenta? {' '}
+                <a href="/" className="text-blue-700">
+                    Crea una
                 </a>
             </p>
 
             <div className="bg-white w-full md:w-6/12 lg:w-4/12 xl:w-3/12 rounded p-8 mt-12 shadow-lg">
 
-
-                <form autoComplete="off" className="" onSubmit={handleSubmit}>
-                    <input type="email" className="hidden"></input>
-                    <input type="password" className="hidden"></input>
+                <form className="" onSubmit={handleSubmit}>
 
                     <fieldset className="flex flex-col">
                         <label htmlFor="email"
@@ -66,7 +70,7 @@ export default function Register() {
                                focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400"/>
                     </fieldset>
 
-                    <fieldset className="flex flex-col mt-4">
+                    <fieldset className="flex flex-col mt-6">
                         <label htmlFor="password"
                             className="text-sm font-medium">
                             Contraseña
@@ -78,19 +82,19 @@ export default function Register() {
 
                     <button type="submit"
                         className="w-full bg-blue-400 text-white py-2 mt-10 rounded font-medium">
-                        Crear cuenta
+                        Iniciar sesión
                     </button>
 
                     <span className="font-medium flex justify-center mt-2">O</span>
 
                     <button className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
                         <img src="/google.svg" alt="Google Logo" className="h-5 mr-3" />
-                        <span className="text-center">Crea cuenta con Google</span>
+                        <span className="text-center">Inicia sesión con Google</span>
                     </button>
 
                     <button className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
                         <img src="/patreon.svg" alt="Patreon Logo" className="h-5 mr-3" />
-                        <span className="text-center">Crea cuenta con Patreon</span>
+                        <span className="text-center">Inicia sesión con Patreon</span>
                     </button>
                 </form>
             </div>

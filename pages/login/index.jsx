@@ -37,6 +37,14 @@ export default function Login() {
         }
     }
 
+    async function handlePatreonLogin() {
+        // let loginWindow = window.open(
+        //     'http://www.patreon.com/oauth2/authorize?response_type=code&client_id=zqfmkU8Cf8sF896iBCBjw0ib0xwjLVMZS2RCUjQbl8ZnrUOqhdZ12v64yTiHQSSU',
+        //     'Inicia sesión con Patreon',
+        //     'width=600,height=900,left=200,top=200'
+        // );
+    }
+
     return (
         <div className="flex flex-col justify-center items-center min-h-screen
     bg-gradient-to-br from-blue-200 to-blue-300 text-gray-700
@@ -87,15 +95,17 @@ export default function Login() {
 
                     <span className="font-medium flex justify-center mt-2">O</span>
 
-                    <button className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
+                    <button type="button" className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
                         <img src="/google.svg" alt="Google Logo" className="h-5 mr-3" />
                         <span className="text-center">Inicia sesión con Google</span>
                     </button>
 
-                    <button className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
+                    <a type="button" className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium"
+                        href={process.env.PATREON_URL}
+                    >
                         <img src="/patreon.svg" alt="Patreon Logo" className="h-5 mr-3" />
                         <span className="text-center">Inicia sesión con Patreon</span>
-                    </button>
+                    </a>
                 </form>
             </div>
         </div>

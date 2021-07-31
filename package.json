@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start"
   },
@@ -10,6 +10,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.0.0",
     "next": "latest",
+    "patreon": "^0.4.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

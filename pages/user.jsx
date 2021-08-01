@@ -55,8 +55,7 @@ export default function User() {
     if (!user) {
         return (
             <div className="flex flex-col justify-center items-center min-h-screen
-    bg-gradient-to-br from-blue-200 to-blue-300 text-gray-700
-    p-6">
+    bg-gradient-to-br from-blue-200 to-blue-300 text-gray-700 p-6">
                 <Head>
                     <title>Next.js Auth</title>
                     <link rel="icon" href="/favicon.ico" />
@@ -71,8 +70,7 @@ export default function User() {
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen
-    bg-gradient-to-br from-blue-200 to-blue-300 text-gray-700
-    p-6">
+    bg-gradient-to-br from-blue-200 to-blue-300 text-gray-700 p-6">
             <Head>
                 <title>Next.js Auth</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -119,7 +117,7 @@ export default function User() {
                         Actualizar datos
                     </button>
 
-                    <button onClick={() => closeSession()}
+                    <button type="button" onClick={() => closeSession()}
                         className="w-full bg-red-400 text-white py-2 mt-4 rounded font-medium">
                         Cerrar sesión
                     </button>

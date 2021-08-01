@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 
 export default function Login() {
 
@@ -17,7 +16,7 @@ export default function Login() {
         }
 
         const res = await fetch(
-            '/api/authenticate/login',
+            '/api/login',
             {
                 body: JSON.stringify({
                     email,
@@ -100,11 +99,16 @@ export default function Login() {
                         <span className="text-center">Inicia sesión con Google</span>
                     </button>
 
-                    <a type="button" className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium"
-                        href={process.env.PATREON_URL}
-                    >
+                    <a href={process.env.PATREON_URL}
+                        className="pointer w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
                         <img src="/patreon.svg" alt="Patreon Logo" className="h-5 mr-3" />
                         <span className="text-center">Inicia sesión con Patreon</span>
+                    </a>
+
+                    <a href={process.env.DISCORD_URL}
+                        className="pointer w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
+                        <img src="/discord.svg" alt="Discord Logo" className="h-5 mr-3" />
+                        <span className="text-center">Inicia sesión con Discord</span>
                     </a>
                 </form>
             </div>

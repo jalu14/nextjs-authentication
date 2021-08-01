@@ -13,7 +13,7 @@ export default function Register() {
         }
 
         const res = await fetch(
-            '/api/authenticate/register',
+            '/api/register',
             {
                 body: JSON.stringify({
                     email,
@@ -85,13 +85,20 @@ export default function Register() {
 
                     <button className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
                         <img src="/google.svg" alt="Google Logo" className="h-5 mr-3" />
-                        <span className="text-center">Crea cuenta con Google</span>
+                        <span className="text-center">Crear cuenta con Google</span>
                     </button>
 
-                    <button className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
+                    <a href={process.env.PATREON_URL}
+                        className="pointer w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
                         <img src="/patreon.svg" alt="Patreon Logo" className="h-5 mr-3" />
-                        <span className="text-center">Crea cuenta con Patreon</span>
-                    </button>
+                        <span className="text-center">Crear cuenta con Patreon</span>
+                    </a>
+
+                    <a href={process.env.DISCORD_URL}
+                        className="pointer w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
+                        <img src="/discord.svg" alt="Discord Logo" className="h-5 mr-3" />
+                        <span className="text-center">Crear cuenta con Discord</span>
+                    </a>
                 </form>
             </div>
         </div>

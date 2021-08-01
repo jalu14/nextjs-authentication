@@ -94,10 +94,11 @@ export default function Login() {
 
                     <span className="font-medium flex justify-center mt-2">O</span>
 
-                    <button type="button" className="w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
+                    <a href={`${process.env.GOOGLE_URL}?response_type=id_token&client_id=${process.env.GOOGLE_ID}&redirect_uri=${process.env.GOOGLE_REDIR}&scope=email profile`}
+                        className="pointer w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">
                         <img src="/google.svg" alt="Google Logo" className="h-5 mr-3" />
                         <span className="text-center">Inicia sesión con Google</span>
-                    </button>
+                    </a>
 
                     <a href={process.env.PATREON_URL}
                         className="pointer w-full shadow p-2 mt-2 rounded flex items-center justify-center font-medium">

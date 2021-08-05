@@ -1,5 +1,5 @@
 import * as patreon from 'patreon';
-import { connectToDatabase } from '../../../utils/dbConnect';
+import { UserData } from '../../../utils/data/user.data';
 import { generateTokenFromUser } from '../../../utils/token';
 
 const patreonAPI = patreon.patreon;
@@ -20,46 +20,9 @@ export default async function handler(req, res) {
                     res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });
                 }
 
-                const { db } = await connectToDatabase();
-                let existingUser = await db.collection('users').findOne({ email: userData.attributes.email });
+                const [user, userError] = await UserData.getCreateUserFromSocialEmail(userData.email, 'google');
 
-                if (!existingUser) {
-                    const newUser = {
-                        email: userData.attributes.email,
-                        data: {},
-                        social: {
-                            patreon: {
-                                id: userData.id,
-                                email: userData.attributes.email
-                            }
-                        }
-                    };
-
-                    existingUser = await db.collection('users').insertOne(newUser);
-                }
-
-                if (!existingUser.social.patreon) {
-                    existingUser.social.patreon = {
-                        patreon: {
-                            id: userData.id,
-                            email: userData.attributes.email
-                        }
-                    }
-
-                    db.collection('users').findOneAndUpdate(
-                        { _id: existingUser._id },
-                        {
-                            $set: {
-                                'social.patreon': {
-                                    id: userData.id,
-                                    email: userData.attributes.email
-                                }
-                            }
-                        }
-                    );
-                }
-
-                let token = generateTokenFromUser(existingUser);
+                let token = generateTokenFromUser(user);
                 res.status(200).json({ status: 'success', data: { token } });
             } catch (error) {
                 res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });

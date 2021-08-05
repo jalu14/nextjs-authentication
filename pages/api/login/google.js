@@ -1,6 +1,6 @@
 import { OAuth2Client } from 'google-auth-library';
 import { generateTokenFromUser } from "../../../utils/token";
-import { connectToDatabase } from "../../../utils/dbConnect";
+import { UserData } from '../../../utils/data/user.data';
 
 const GOOGLE_USER_INFO = 'https://www.googleapis.com/oauth2/v3/userinfo';
 const GOOGLE_TOKEN_INFO = 'https://www.googleapis.com/oauth2/v3/tokeninfo';
@@ -17,47 +17,10 @@ export default async function handler(req, res) {
 
             if (!userData || error) {
                 return res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });
-            }
+            }            
 
-            const { db } = await connectToDatabase();
-            let existingUser = await db.collection('users').findOne({ email: userData.email });
-
-            if (!existingUser) {
-                const newUser = {
-                    email: userData.email,
-                    data: {},
-                    social: {
-                        google: {
-                            email: userData.email
-                        }
-                    }
-                };
-
-                existingUser = await db.collection('users').insertOne(newUser);
-            }
-
-
-
-            if (!existingUser.social.google) {
-                existingUser.social.google = {
-                    google: {
-                        email: userData.email
-                    }
-                }
-
-                db.collection('users').findOneAndUpdate(
-                    { _id: existingUser._id },
-                    {
-                        $set: {
-                            'social.google': {
-                                email: userData.email
-                            }
-                        }
-                    }
-                );
-            }
-
-            let token = generateTokenFromUser(existingUser);
+            const [user, userError] = await UserData.getCreateUserFromSocialEmail(userData.email, 'google');
+            let token = generateTokenFromUser(user);
 
             return res.status(200).json({ status: 'success', data: { token } });
             break;

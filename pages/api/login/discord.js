@@ -1,6 +1,6 @@
 import axios from "axios";
 import { generateTokenFromUser } from "../../../utils/token";
-import { connectToDatabase } from "../../../utils/dbConnect";
+import { UserData } from "../../../utils/data/user.data";
 
 const DISCORD_URL_TOKEN = 'https://discord.com/api/v8/oauth2/token';
 const DISCORD_URL_ACCESS = 'https://discord.com/api/v6/users/@me';
@@ -12,49 +12,15 @@ export default async function handler(req, res) {
     switch (method) {
         case 'GET':
             const [accessToken, error] = await getOAuthToken(query.code);
-            const [userData, userError] = await getDiscordInfo(accessToken);
+            const [userData, dataError] = await getDiscordInfo(accessToken);
 
-            if (!userData || error) {
+            if (!userData || error || dataError) {
                 return res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });
             }
 
-            const { db } = await connectToDatabase();
-            let existingUser = await db.collection('users').findOne({ email: userData.email });
+            const [user, userError] = await UserData.getCreateUserFromSocialEmail(userData.email, 'discord');
 
-            if (!existingUser) {
-                const newUser = {
-                    email: userData.email,
-                    data: {},
-                    social: {
-                        discord: {
-                            email: userData.email
-                        }
-                    }
-                };
-
-                existingUser = await db.collection('users').insertOne(newUser);
-            }
-
-            if (!existingUser.social.discord) {
-                existingUser.social.discord = {
-                    discord: {
-                        email: userData.email
-                    }
-                }
-
-                db.collection('users').findOneAndUpdate(
-                    { _id: existingUser._id },
-                    {
-                        $set: {
-                            'social.discord': {
-                                email: userData.email
-                            }
-                        }
-                    }
-                );
-            }
-
-            let token = generateTokenFromUser(existingUser);
+            let token = generateTokenFromUser(user);
 
             return res.status(200).json({ status: 'success', data: { token } });
             break;

@@ -7,11 +7,12 @@ const DISCORD_URL_ACCESS = 'https://discord.com/api/v6/users/@me';
 
 export default async function handler(req, res) {
     const { method, query } = req;
-    console.log('Discord login attempt with token: ' + query.token);
+    console.log('Discord login attempt with code: ' + query.code);
 
     switch (method) {
         case 'GET':
-            const [userData, error] = await getDiscordInfo(query.token);
+            const [accessToken, error] = await getOAuthToken(query.code);
+            const [userData, userError] = await getDiscordInfo(accessToken);
 
             if (!userData || error) {
                 return res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });
@@ -33,8 +34,6 @@ export default async function handler(req, res) {
 
                 existingUser = await db.collection('users').insertOne(newUser);
             }
-
-
 
             if (!existingUser.social.discord) {
                 existingUser.social.discord = {
@@ -70,23 +69,23 @@ async function getOAuthToken(code) {
         let data = await axios({
             method: 'POST',
             url: DISCORD_URL_TOKEN,
-            data: {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: new URLSearchParams({
                 client_id: process.env.DISCORD_ID,
                 client_secret: process.env.DISCORD_SECRET,
                 grant_type: 'authorization_code',
                 code: code,
                 redirect_uri: 'http://localhost:3000/login/discord',
-            },
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
+            })
         });
 
         if (data.error) {
             return [null, { error: data.error, description: data.error_description }];
         }
 
-        return [data.data, null];
+        return [data.data.access_token, null];
     } catch (e) {
         return [null, e];
     }

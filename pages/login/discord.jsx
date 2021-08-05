@@ -9,14 +9,14 @@ export default function Login() {
     const [error, setError] = useState();
 
     useEffect(() => {
-        const { access_token, error, error_description } = getQuery(router.asPath.replace('#', '?'));
+        const { code, error, error_description } = getQuery(router.asPath.replace('#', '?'));
 
         if (error) {
             setError(error_description);
             return;
         }
 
-        fetch(`/api/login/discord?token=${access_token}`)
+        fetch(`/api/login/discord?code=${code}`)
             .then(res => res.json())
             .then(res => {
                 if (!res.status || res.status !== 'success') {

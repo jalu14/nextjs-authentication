@@ -16,9 +16,8 @@ export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
             let existingUser = await db.collection('users').findOne({ email: user.email });
-            let userToSend = { ...existingUser };
-            delete userToSend.password;
-            return res.status(200).json({ status: 'success', data: { user: userToSend } });
+            delete existingUser.password;
+            return res.status(200).json({ status: 'success', data: { user: existingUser } });
             break;
         case 'PUT':
             let newUser = await db.collection('users').findOneAndUpdate(

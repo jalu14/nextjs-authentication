@@ -1,6 +1,18 @@
-import { connectToDatabase } from "../dbConnect";
+import { connectToDatabase } from "../utils/dbConnect";
 
 export class UserData {
+
+    static async findOne(email) {
+        try {
+            const { db } = await connectToDatabase();
+            const user = await db.collection('users')
+                .findOne({ email: email })
+                .project({ _id: 0 });
+            return [user, null];
+        } catch (e) {
+            return [null, e];
+        }
+    }
 
     static async getCreateUserFromSocialEmail(email, social) {
         if (!email) {
@@ -22,7 +34,13 @@ export class UserData {
                 };
                 newUser.social[social] = { email };
 
-                existingUser = await db.collection('users').insertOne(newUser);
+                let inserted = await db.collection('users').insertOne(newUser);
+
+                if (!inserted || !inserted.acknowledged) {
+                    return [null, { error: 'user_not_inserted' }];
+                }
+
+                existingUser = newUser;
             }
 
             if (!existingUser.social[social]) {

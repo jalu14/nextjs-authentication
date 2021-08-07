@@ -1,8 +1,7 @@
-import { checkPassword } from "../../../utils/bcrypt";
-import { connectToDatabase } from "../../../utils/dbConnect";
-import { generateTokenFromUser } from '../../../utils/token';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+import { UserData } from "../../../data/user.data";
+import { BcryptUtil } from "../../../utils/bcrypt";
+import { TokenUtil } from '../../../utils/token';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -13,21 +12,19 @@ export default async function handler(req, res) {
         return res.status(400).json({ status: 'error' });
     }
 
-    const { db } = await connectToDatabase();
-
-    let existingUser = await db.collection('users').findOne({ email: req.body.email });
+    let existingUser = await UserData.findOne(req.body.email);
     if (!existingUser) {
         return res.status(400).json({ status: 'error', message: 'El usuario no existe' });
     }
 
-    let [passwordsMatch, error] = checkPassword(req.body.password, existingUser.password);
-    if (!passwordsMatch || error) {
+    let [isEqual, error] = BcryptUtil.checkPassword(req.body.password, existingUser.password);
+    if (!isEqual || error) {
         return res.status(400).json({ status: 'error', message: 'La contraseña es incorrecta' });
     }
 
     delete existingUser.password;
 
-    let token = generateTokenFromUser(existingUser);
+    let token = TokenUtil.generateTokenFromUser(existingUser);
 
     return res.status(200).json({ status: 'success', data: { token: token } });
 }

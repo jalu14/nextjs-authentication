@@ -1,6 +1,6 @@
 import * as patreon from 'patreon';
-import { UserData } from '../../../utils/data/user.data';
-import { generateTokenFromUser } from '../../../utils/token';
+import { UserData } from '../../../data/user.data';
+import { TokenUtil } from '../../../utils/token';
 
 const patreonAPI = patreon.patreon;
 const patreonOAuth = patreon.oauth;
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
                 const [user, userError] = await UserData.getCreateUserFromSocialEmail(userData.email, 'google');
 
-                let token = generateTokenFromUser(user);
+                let token = TokenUtil.generateTokenFromUser(user);
                 res.status(200).json({ status: 'success', data: { token } });
             } catch (error) {
                 res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });

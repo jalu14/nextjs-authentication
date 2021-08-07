@@ -14,8 +14,7 @@ export default function User() {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        const res = await fetch(
-            '/api/user',
+        fetch('/api/user',
             {
                 body: JSON.stringify(user),
                 headers: {
@@ -23,28 +22,30 @@ export default function User() {
                     'x-access-token': localStorage.getItem('token')
                 },
                 method: 'PUT'
-            }
-        )
-
-        const result = await res.json();
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    alert('Datos actualizados')
+                }
+            });
     }
 
     async function getUser() {
-        const res = await fetch(
-            '/api/user',
+        fetch('/api/user',
             {
                 headers: {
                     'Content-Type': 'application/json',
                     'x-access-token': localStorage.getItem('token')
                 },
                 method: 'GET'
-            }
-        )
-
-        const result = await res.json();
-        if (result && result.status === 'success') {
-            setUser(result.data.user);
-        }
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    setUser(res.data.user);
+                }
+            });
     }
 
     function closeSession() {

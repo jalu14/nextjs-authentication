@@ -12,8 +12,7 @@ export default function Register() {
             return;
         }
 
-        const res = await fetch(
-            '/api/register',
+        fetch('/api/register',
             {
                 body: JSON.stringify({
                     email,
@@ -23,11 +22,16 @@ export default function Register() {
                     'Content-Type': 'application/json'
                 },
                 method: 'POST'
-            }
-        )
-
-        const result = await res.json();
-        // result.status => 'success'
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    alert('Usuario creado, ahora puede iniciar sesión');
+                }
+                if (res.status !== 'success' && res.message) {
+                    alert(res.message)
+                }
+            })
     }
 
     return (

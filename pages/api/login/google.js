@@ -1,9 +1,6 @@
 import { OAuth2Client } from 'google-auth-library';
-import { generateTokenFromUser } from "../../../utils/token";
-import { UserData } from '../../../utils/data/user.data';
-
-const GOOGLE_USER_INFO = 'https://www.googleapis.com/oauth2/v3/userinfo';
-const GOOGLE_TOKEN_INFO = 'https://www.googleapis.com/oauth2/v3/tokeninfo';
+import { TokenUtil } from "../../../utils/token";
+import { UserData } from '../../../data/user.data';
 
 const CLIENT = new OAuth2Client(process.env.GOOGLE_ID);
 
@@ -17,10 +14,10 @@ export default async function handler(req, res) {
 
             if (!userData || error) {
                 return res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });
-            }            
+            }
 
             const [user, userError] = await UserData.getCreateUserFromSocialEmail(userData.email, 'google');
-            let token = generateTokenFromUser(user);
+            let token = TokenUtil.generateTokenFromUser(user);
 
             return res.status(200).json({ status: 'success', data: { token } });
             break;

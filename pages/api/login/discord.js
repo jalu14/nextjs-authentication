@@ -1,6 +1,6 @@
 import axios from "axios";
-import { generateTokenFromUser } from "../../../utils/token";
-import { UserData } from "../../../utils/data/user.data";
+import { UserData } from "../../../data/user.data";
+import { TokenUtil } from "../../../utils/token";
 
 const DISCORD_URL_TOKEN = 'https://discord.com/api/v8/oauth2/token';
 const DISCORD_URL_ACCESS = 'https://discord.com/api/v6/users/@me';
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
             const [user, userError] = await UserData.getCreateUserFromSocialEmail(userData.email, 'discord');
 
-            let token = generateTokenFromUser(user);
+            let token = TokenUtil.generateTokenFromUser(user);
 
             return res.status(200).json({ status: 'success', data: { token } });
             break;

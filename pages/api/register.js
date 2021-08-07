@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
-import { connectToDatabase } from "../../../utils/db-connect";
+import { BcryptUtil } from '../../utils/bcrypt';
+import { connectToDatabase } from '../../utils/dbConnect';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -17,9 +18,15 @@ export default async function handler(req, res) {
         return res.status(400).json({ status: 'error', message: 'El usuario ya ha sido registrado' });
     }
 
+    const [hash, hashError] = BcryptUtil.generatePassword(req.body.password);
+
+    if (!hash || hashError) {
+        return res.status(400).json({ status: 'error', message: 'Contraseña no coincide' });
+    }
+
     const newUser = {
         email: req.body.email,
-        password: await bcrypt.hash(req.body.password, 10),
+        password: hash,
         data: {}
     };
 

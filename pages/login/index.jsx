@@ -15,8 +15,7 @@ export default function Login() {
             return;
         }
 
-        const res = await fetch(
-            '/api/login',
+        fetch('/api/login',
             {
                 body: JSON.stringify({
                     email,
@@ -26,22 +25,18 @@ export default function Login() {
                     'Content-Type': 'application/json'
                 },
                 method: 'POST'
-            }
-        )
-
-        const result = await res.json();
-        if (result && result.status === 'success') {
-            localStorage.setItem('token', result.data.token);
-            router.push('/user');
-        }
-    }
-
-    async function handlePatreonLogin() {
-        // let loginWindow = window.open(
-        //     'http://www.patreon.com/oauth2/authorize?response_type=code&client_id=zqfmkU8Cf8sF896iBCBjw0ib0xwjLVMZS2RCUjQbl8ZnrUOqhdZ12v64yTiHQSSU',
-        //     'Inicia sesión con Patreon',
-        //     'width=600,height=900,left=200,top=200'
-        // );
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    localStorage.setItem('token', res.data.token);
+                    router.push('/user');
+                    return;
+                }
+                if (res.status !== 'success' && res.message) {
+                    alert(res.message)
+                }
+            });
     }
 
     return (

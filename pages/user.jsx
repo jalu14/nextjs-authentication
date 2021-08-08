@@ -43,6 +43,7 @@ export default function User() {
             .then(res => res.json())
             .then(res => {
                 if (res.status === 'success') {
+                    console.log(res);
                     setUser(res.data.user);
                 }
             });

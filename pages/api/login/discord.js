@@ -1,12 +1,12 @@
 import axios from "axios";
-import { UserData } from "../../../data/user.data";
-import { TokenUtil } from "../../../utils/token";
+import {TokenUtil} from "../../../utils/token";
+import {UserService} from "../../../services/user.service";
 
 const DISCORD_URL_TOKEN = 'https://discord.com/api/v8/oauth2/token';
 const DISCORD_URL_ACCESS = 'https://discord.com/api/v6/users/@me';
 
 export default async function handler(req, res) {
-    const { method, query } = req;
+    const {method, query} = req;
     console.log('Discord login attempt with code: ' + query.code);
 
     switch (method) {
@@ -15,17 +15,17 @@ export default async function handler(req, res) {
             const [userData, dataError] = await getDiscordInfo(accessToken);
 
             if (!userData || error || dataError) {
-                return res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });
+                return res.status(400).json({status: 'error', data: {error: 'unauthorized'}});
             }
 
-            const [user, userError] = await UserData.getCreateUserFromSocialEmail(userData.email, 'discord');
+            const [user, userError] = await UserService.getCreateUserFromSocialEmail(userData.email, 'discord');
 
             let token = TokenUtil.generateTokenFromUser(user);
 
-            return res.status(200).json({ status: 'success', data: { token } });
+            return res.status(200).json({status: 'success', data: {token}});
             break;
         default:
-            res.status(400).json({ status: 'error' });
+            res.status(400).json({status: 'error'});
             break;
     }
 }
@@ -48,7 +48,7 @@ async function getOAuthToken(code) {
         });
 
         if (data.error) {
-            return [null, { error: data.error, description: data.error_description }];
+            return [null, {error: data.error, description: data.error_description}];
         }
 
         return [data.data.access_token, null];
@@ -72,7 +72,7 @@ async function getDiscordInfo(token) {
         data = await data.json();
 
         if (data.error) {
-            return [null, { error: data.error, description: data.error_description }];
+            return [null, {error: data.error, description: data.error_description}];
         }
 
         return [data, null];

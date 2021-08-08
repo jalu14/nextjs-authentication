@@ -1,7 +1,6 @@
-
-import { UserData } from "../../../data/user.data";
-import { BcryptUtil } from "../../../utils/bcrypt";
+import { BcryptUtil } from '../../../utils/bcrypt';
 import { TokenUtil } from '../../../utils/token';
+import { UserService } from '../../../services/user.service';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -12,13 +11,13 @@ export default async function handler(req, res) {
         return res.status(400).json({ status: 'error' });
     }
 
-    let existingUser = await UserData.findOne(req.body.email);
-    if (!existingUser) {
+    const [existingUser, error] = await UserService.findOne(req.body.email);
+    if (!existingUser || error) {
         return res.status(400).json({ status: 'error', message: 'El usuario no existe' });
     }
 
-    let [isEqual, error] = BcryptUtil.checkPassword(req.body.password, existingUser.password);
-    if (!isEqual || error) {
+    const [isEqual, passwordErorr] = BcryptUtil.checkPassword(req.body.password, existingUser.password);
+    if (!isEqual || passwordErorr) {
         return res.status(400).json({ status: 'error', message: 'La contraseña es incorrecta' });
     }
 

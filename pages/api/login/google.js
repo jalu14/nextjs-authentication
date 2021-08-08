@@ -1,6 +1,6 @@
 import { OAuth2Client } from 'google-auth-library';
 import { TokenUtil } from "../../../utils/token";
-import { UserData } from '../../../data/user.data';
+import {UserService} from "../../../services/user.service";
 
 const CLIENT = new OAuth2Client(process.env.GOOGLE_ID);
 
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
                 return res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });
             }
 
-            const [user, userError] = await UserData.getCreateUserFromSocialEmail(userData.email, 'google');
+            const [user, userError] = await UserService.getCreateUserFromSocialEmail(userData.email, 'google');
             let token = TokenUtil.generateTokenFromUser(user);
 
             return res.status(200).json({ status: 'success', data: { token } });

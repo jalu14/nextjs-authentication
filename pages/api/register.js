@@ -1,6 +1,5 @@
-import bcrypt from 'bcryptjs';
-import { BcryptUtil } from '../../utils/bcrypt';
-import { connectToDatabase } from '../../utils/dbConnect';
+import { BcryptUtil }  from '../../utils/bcrypt';
+import { UserService } from '../../services/user.service';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -8,20 +7,18 @@ export default async function handler(req, res) {
         // OJO A no olvidar el return, si después de este res.status se envia otro
         // crearemos un fallo en la API que se quedará colgada porque intentará enviar
         // una petición ya enviada.
-        return res.status(400).json({ status: 'error' });
+        return res.status(400).json({status: 'error'});
     }
 
-    const { db } = await connectToDatabase();
-
-    let existingUser = await db.collection('users').findOne({ email: req.body.email });
+    let existingUser = await UserService.findOne(req.body.email);
     if (existingUser) {
-        return res.status(400).json({ status: 'error', message: 'El usuario ya ha sido registrado' });
+        return res.status(400).json({status: 'error', message: 'Ese email ya ha sido registrado'});
     }
 
     const [hash, hashError] = BcryptUtil.generatePassword(req.body.password);
 
     if (!hash || hashError) {
-        return res.status(400).json({ status: 'error', message: 'Contraseña no coincide' });
+        return res.status(400).json({status: 'error', message: 'Contraseña incorrecta'});
     }
 
     const newUser = {
@@ -30,7 +27,7 @@ export default async function handler(req, res) {
         data: {}
     };
 
-    let createdUser = await db.collection('users').insertOne(newUser);
+    const [createdUser, createError] = await UserService.createUser(newUser);
 
-    return res.status(200).json({ status: 'success', data: { user: createdUser } });
+    return res.status(200).json({status: 'success', data: {user: createdUser}});
 }

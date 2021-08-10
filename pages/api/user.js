@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
     switch (req.method) {
         case 'GET':
-            let [foundUser, findError] = await UserService.findOne(user.email);
+            const [foundUser, findError] = await UserService.findOne(user.email);
             delete foundUser.password;
             return res.status(200).json({status: 'success', data: {user: foundUser}});
             break;

@@ -10,7 +10,7 @@ export default async function handler(req, res) {
         return res.status(400).json({status: 'error'});
     }
 
-    let existingUser = await UserService.findOne(req.body.email);
+    let [existingUser, error] = await UserService.findOne(req.body.email);
     if (existingUser) {
         return res.status(400).json({status: 'error', message: 'Ese email ya ha sido registrado'});
     }

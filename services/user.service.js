@@ -8,7 +8,6 @@ export class UserService {
             const { db } = await connectToDatabase();
             const user = await db.collection('users')
                 .findOne({ email: email });
-            delete user._id;
             return [user, null];
         } catch (e) {
             return [null, e];
@@ -18,9 +17,9 @@ export class UserService {
     static async createUser(user) {
         try {
             const { db } = await connectToDatabase();
-            const user = await db.collection('users')
+            const newUser = await db.collection('users')
                 .insertOne(user);
-            return [user, null];
+            return [newUser, null];
         } catch (e) {
             return [null, e];
         }
@@ -84,7 +83,7 @@ export class UserService {
                 { $set: { data: user.data } }
             );
             updatedUser = updatedUser.value;
-            return [user, null];
+            return [updatedUser, null];
         } catch (e) {
             return [null, e];
         }

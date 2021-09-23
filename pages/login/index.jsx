@@ -89,6 +89,7 @@ export default function Login() {
                     </fieldset>
 
                     <button type="submit"
+                        disabled={loading}
                         className="w-full bg-blue-400 text-white py-2 mt-10 rounded font-medium">
                         Iniciar sesión
                     </button>

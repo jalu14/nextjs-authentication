@@ -5,10 +5,14 @@ import { useEffect, useState } from "react";
 export default function User() {
     const router = useRouter();
     const [user, setUser] = useState(null);
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (!token) return;
+        if (!token) {
+            setError(true);
+            return;
+        }
         getUser();
     }, []);
 
@@ -63,9 +67,17 @@ export default function User() {
                     <link rel="icon" href="/favicon.ico" />
                 </Head>
 
-                <h1 className="text-5xl font-bold text-center">
-                    Loading...
-                </h1>
+                {
+                    error ?
+                        <h1 className="text-5xl font-bold text-center">
+                            Necesitas <a href="/login" className="text-blue-700">iniciar sesión</a>
+                        </h1>
+                        :
+                        <h1 className="text-5xl font-bold text-center">
+                            Loading...
+                        </h1>
+                }
+
             </div>
         )
     }

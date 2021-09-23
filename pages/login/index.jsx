@@ -1,17 +1,22 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 export default function Login() {
 
     const router = useRouter();
+    let [loading, setLoading] = useState(false);
 
     async function handleSubmit(event) {
         event.preventDefault();
+        if (loading) return;
+        setLoading(true);
         let email = event.target.email.value;
         let password = event.target.password.value;
 
         if (!email || !password) {
-            alert('Para registrar una cuenta tienes que especificar un correo electrónico y una contraseña')
+            alert('Para registrar una cuenta tienes que especificar un correo electrónico y una contraseña');
+            setLoading(false);
             return;
         }
 
@@ -28,6 +33,7 @@ export default function Login() {
             })
             .then(res => res.json())
             .then(res => {
+                setLoading(false);
                 if (res.status === 'success') {
                     localStorage.setItem('token', res.data.token);
                     router.push('/user');

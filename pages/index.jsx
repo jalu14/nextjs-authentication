@@ -1,14 +1,20 @@
 import Head from 'next/head';
+import { useState } from 'react';
 
 export default function Register() {
 
+    let [loading, setLoading] = useState(false);
+
     async function handleSubmit(event) {
         event.preventDefault();
+        if (loading) return;
+        setLoading(true);
         let email = event.target.email.value;
         let password = event.target.password.value;
 
         if (!email || !password) {
-            alert('Para registrar una cuenta tienes que especificar un correo electrónico y una contraseña')
+            alert('Para registrar una cuenta tienes que especificar un correo electrónico y una contraseña');
+            setLoading(false);
             return;
         }
 
@@ -31,6 +37,7 @@ export default function Register() {
                 if (res.status !== 'success' && res.message) {
                     alert(res.message)
                 }
+                setLoading(false);
             })
     }
 
@@ -81,7 +88,8 @@ export default function Register() {
                     </fieldset>
 
                     <button type="submit"
-                        className="w-full bg-blue-400 text-white py-2 mt-10 rounded font-medium">
+                        disabled={loading}
+                        className="w-full bg-blue-400 text-white py-2 mt-10 rounded font-medium disabled:opacity-50">
                         Crear cuenta
                     </button>
 

@@ -18,9 +18,10 @@ export default async function handler(req, res) {
 
                 if (!userData || error) {
                     res.status(400).json({ status: 'error', data: { error: 'unauthorized' } });
+                    return;
                 }
 
-                const [user, userError] = await UserService.getCreateUserFromSocialEmail(userData.email, 'google');
+                const [user, userError] = await UserService.getCreateUserFromSocialEmail(userData.attributes.email, 'patreon');
 
                 let token = TokenUtil.generateTokenFromUser(user);
                 res.status(200).json({ status: 'success', data: { token } });
@@ -36,7 +37,7 @@ export default async function handler(req, res) {
 
 async function getPatreonInfo(code) {
     try {
-        const patreonToken = await patreonClient.getTokens(code, 'http://localhost:3000/login/patreon');
+        const patreonToken = await patreonClient.getTokens(code, process.env.PATREON_BACK_URL);
         const patreonAPIClient = patreonAPI(patreonToken.access_token);
         const { store } = await patreonAPIClient('/current_user');
         const data = store.findAll('user').map(user => user.serialize());
